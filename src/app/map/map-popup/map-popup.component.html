@@ -1,0 +1,8 @@
+<p><strong>{{ content?.name }}</strong></p>
+<p>
+  <span *ngIf="type === 'offer'">bietet an: </span>
+  <span *ngIf="type === 'request'">benötigt: </span>
+  <span *ngFor="let task of content?.tasks"><mat-icon>{{ iconMap[task] }} </mat-icon></span>
+</p>
+<p>{{ content?.address?.text }}</p>
+<button class="mat-raised-button" (click)="open(content)">Mehr erfahren</button>

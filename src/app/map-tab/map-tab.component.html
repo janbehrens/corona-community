@@ -1,0 +1,18 @@
+<div class="tab-map">
+  <app-map (select)="onSelect($event)"></app-map>
+
+  <div class="container">
+    <mat-card *ngIf="offer">
+      <h2>{{ offer.name }}</h2>
+      <p>Bietet Hilfe an beim: <strong *ngFor="let task of offer.tasks, last as last">{{ t[task] }}{{ last ? '' : ', ' }}</strong></p>
+      <p>Wohnort: {{ offer.address.text }}</p>
+      <p>Nachricht: {{ offer.message }}</p>
+    </mat-card>
+    <mat-card *ngIf="request">
+    <h2>{{ request.name }}</h2>
+      <p>Benötigt Hilfe beim: <strong *ngFor="let task of request.tasks, last as last">{{ t[task] }}{{ last ? '' : ', ' }}</strong></p>
+      <p>Wohnort: {{ request.address.text }}</p>
+      <p>Nachricht: {{ request.message }}</p>
+    </mat-card>
+  </div>
+</div>

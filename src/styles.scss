@@ -1,0 +1,86 @@
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body,
+.mat-toolbar,
+.mat-menu-item,
+.mat-tab-group,
+.mat-tab-label,
+.mat-card,
+.mat-dialog-title,
+.mat-stepper-vertical,
+.mat-button,
+.mat-raised-button,
+.mat-form-field,
+.mat-select,
+.mat-option,
+.mat-checkbox {
+  font-family: 'Ubuntu', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.mat-tab-label-content {
+  font-size: 16px;
+}
+
+.container {
+  margin: 15px;
+}
+
+.tab-help {
+  .mat-figure {
+    button {
+      min-height: calc(100% - 30px);
+      min-width: calc(100% - 30px);
+      margin: 15px;
+      font-size: 20px;
+    }
+
+    .mat-icon {
+      height: 56px;
+      width: 48px;
+      font-size: 48px;
+      margin-top: 8px;
+    }
+  }
+
+  .mat-form-field {
+    width: 100%;
+  }
+
+  .mapboxgl-map {
+    min-height: 360px;
+    font-family: inherit;
+    margin-bottom: 25px;
+  }
+
+  .geocoder {
+    display: none;
+  }
+}
+
+.tab-map {
+  .mapboxgl-map {
+    font-family: inherit;
+    width: 100%;
+    height: 600px;
+
+    .mapboxgl-canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .mapboxgl-popup {
+      font-size: 16px;
+    }
+  }
+}
+
+footer {
+  .container p {
+    font-size: 14px;
+    color: grey;
+    text-align: end;
+  }
+}

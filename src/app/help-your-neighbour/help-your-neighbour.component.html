@@ -1,0 +1,165 @@
+<div class="tab-help">
+  <div class="container">
+    <p *ngIf="offer">Womit kannst du Menschen in deiner Nachbarschaft helfen?</p>
+    <p *ngIf="need">Wobei benötigst du Hilfe?</p>
+    <p><small>Du kannst mehrere Optionen auswählen.</small></p>
+  </div>
+
+  <!-- SHOP / WALK / CARE / TALK -->
+  <mat-grid-list cols="2" rowHeight="2:1">
+    <mat-grid-tile #shop>
+      <button mat-raised-button [color]="selectedTasks.indexOf('shop') > -1 ? 'primary' : ''" (click)="toggleTask('shop')">
+        <mat-icon>shopping_cart</mat-icon>
+        <br>
+        <span>Einkaufen</span>
+      </button>
+    </mat-grid-tile>
+    <mat-grid-tile #walk>
+      <button mat-raised-button [color]="selectedTasks.indexOf('walk') > -1 ? 'primary' : ''" (click)="toggleTask('walk')">
+        <mat-icon>pets</mat-icon>
+        <br>
+        <span>Gassi gehen</span>
+      </button>
+    </mat-grid-tile>
+    <mat-grid-tile #care>
+      <button mat-raised-button [color]="selectedTasks.indexOf('care') > -1 ? 'primary' : ''" (click)="toggleTask('care')">
+        <mat-icon>supervised_user_circle</mat-icon>
+        <br>
+        <span>Betreuen</span>
+      </button>
+    </mat-grid-tile>
+    <mat-grid-tile #talk>
+      <button mat-raised-button [color]="selectedTasks.indexOf('talk') > -1 ? 'primary' : ''" (click)="toggleTask('talk')">
+        <mat-icon>phone_in_talk</mat-icon>
+        <br>
+        <span>Reden</span>
+      </button>
+    </mat-grid-tile>
+  </mat-grid-list>
+
+  <div *ngIf="selectedTasks.length > 0">
+    <!-- NOT LOGGED IN -->
+    <div class="container" *ngIf="!auth.loggedIn">
+      <div *ngIf="!showSignUpForm">
+        <p>Du musst dich anmelden, um dich in die Datenbank eintragen zu können.</p>
+        <p>
+          <button mat-raised-button (click)="open.emit('login')">Einloggen</button>
+          <button mat-button (click)="signUp()">Registrieren</button>
+        </p>
+      </div>
+      <div *ngIf="showSignUpForm">
+        <p>Registrieren</p>
+        <p>
+          <app-signup-form></app-signup-form>
+        </p>
+      </div>
+    </div>
+
+    <!-- LOGGED IN -->
+    <mat-vertical-stepper linear #stepperHelp *ngIf="auth.loggedIn">
+      <!-- NAME -->
+      <mat-step [stepControl]="nameFormGroup">
+        <form [formGroup]="nameFormGroup">
+          <ng-template matStepLabel>Bitte gib deinen Namen ein.<br>Dieser wird öffentlich angezeigt.</ng-template>
+          <mat-form-field>
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" required>
+          </mat-form-field>
+          <div>
+            <button mat-raised-button matStepperNext>Weiter</button>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- ADDRESS -->
+      <mat-step [stepControl]="addressFormGroup">
+        <form [formGroup]="addressFormGroup">
+          <ng-template *ngIf="offer" matStepLabel>Bitte gib deine Adresse ein.<br>Diese wird benötigt, damit Hilfesuchende in deiner Nähe dich finden können.</ng-template>
+          <ng-template *ngIf="need" matStepLabel>Bitte gib deine Adresse ein.<br>Diese wird benötigt, damit du Helfende in deiner Nähe finden kannst.</ng-template>
+          <mat-form-field>
+            <mat-label>Adresse</mat-label>
+            <input matInput
+                   formControlName="address"
+                   required
+                   [matAutocomplete]="auto"
+                   (keyup)="onGeocoderInput($event)">
+          </mat-form-field>
+          <mat-autocomplete #auto="matAutocomplete"
+                            [displayWith]="displayGeocoderOption"
+                            (optionSelected)="onAddressChange($event)">
+            <mat-option *ngFor="let option of addressAutocompleteOptions"
+                        [value]="option">{{ option.place_name }}</mat-option>
+          </mat-autocomplete>
+          <app-map embed="yes" hasGeocoder="yes" (geocoderResults)="onGeocoderResults($event)"></app-map>
+          <div>
+            <button mat-raised-button matStepperPrevious>Zurück</button>
+            <button mat-raised-button matStepperNext>Weiter</button>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- MESSAGE -->
+      <mat-step [stepControl]="messageFormGroup">
+        <form [formGroup]="messageFormGroup">
+          <ng-template *ngIf="offer" matStepLabel>Erzähl uns genau, wie du helfen kannst.</ng-template>
+          <ng-template *ngIf="need" matStepLabel>Erzähl uns genau, wobei du Hilfe benötigst.</ng-template>
+          <mat-form-field>
+            <mat-label>Nachricht</mat-label>
+            <textarea matInput
+                      formControlName="message"
+                      cdkTextareaAutosize
+                      cdkAutosizeMinRows="3"
+                      required></textarea>
+            <mat-hint>Wann kannst du deine Hilfe anbieten? Wie mobil bist du?</mat-hint>
+          </mat-form-field>
+          <div>
+            <button mat-raised-button matStepperPrevious>Zurück</button>
+            <button mat-raised-button matStepperNext>Weiter</button>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- CHECKUP -->
+      <mat-step [stepControl]="checkupFormGroup">
+        <form [formGroup]="checkupFormGroup">
+          <ng-template matStepLabel>Noch eine Frage …</ng-template>
+          <mat-form-field *ngIf="offer">
+            <mat-label>Bist du gesund?</mat-label>
+            <mat-select formControlName="healthy" required>
+              <mat-option value="yes">Ja</mat-option>
+              <mat-option value="no">Nein</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field *ngIf="offer && checkupFormGroup.value.healthy === 'no'">
+            <mat-label>Was genau hast du?</mat-label>
+            <textarea matInput
+                      formControlName="healthDetail"
+                      cdkTextareaAutosize
+                      cdkAutosizeMinRows="2"></textarea>
+          </mat-form-field>
+          <mat-form-field *ngIf="need">
+            <mat-label>Was trifft auf deine Situation am besten zu?</mat-label>
+            <mat-select formControlName="condition" required>
+              <mat-option value="quarantine">Ich befinde mich wegen des Coronavirus in Quarantäne</mat-option>
+              <mat-option value="riskGroup">Ich gehöre zu einer Covid-19-Risikogruppe</mat-option>
+              <mat-option value="other">Ich bin aus anderen Gründen hilfsbedürftig</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field *ngIf="need && checkupFormGroup.value.condition">
+            <mat-label>Möchtest du deine Situation genauer beschreiben?</mat-label>
+            <textarea matInput
+                      formControlName="conditionDetail"
+                      cdkTextareaAutosize
+                      cdkAutosizeMinRows="2"></textarea>
+          </mat-form-field>
+          <div>
+            <button mat-raised-button matStepperPrevious>Zurück</button>
+            <button mat-raised-button
+                    [disabled]="!(nameFormGroup.valid && addressFormGroup.valid && messageFormGroup.valid && checkupFormGroup.valid)"
+                    (click)="submit()">Abschicken</button>
+          </div>
+        </form>
+      </mat-step>
+    </mat-vertical-stepper>
+  </div>
+</div>

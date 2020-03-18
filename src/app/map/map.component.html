@@ -1,0 +1,10 @@
+<div id="geocoder" class="geocoder"></div>
+<div #map></div>
+
+<div *ngFor="let offer of offers" id="offer_{{ offer._id }}" >
+  <app-map-popup type="offer" [content]="offer" (more)="onMore($event)"></app-map-popup>
+</div>
+
+<div *ngFor="let request of requests" id="request_{{ request._id }}" >
+  <app-map-popup type="request" [content]="request" (more)="onMore($event)"></app-map-popup>
+</div>

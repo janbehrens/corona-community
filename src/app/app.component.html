@@ -1,0 +1,47 @@
+<header>
+  <mat-toolbar color="primary">
+    <span style="flex-grow: 1;">Corona*Community</span>
+    <span class="userinfo" *ngIf="auth.loggedIn">{{ user?.username }}</span>
+    <button mat-icon-button [matMenuTriggerFor]="accountMenu"><mat-icon>account_circle</mat-icon></button>
+    <button mat-icon-button [matMenuTriggerFor]="appMenu"><mat-icon>more_vert</mat-icon></button>
+  </mat-toolbar>
+
+  <mat-menu #accountMenu="matMenu">
+    <button mat-menu-item *ngIf="!auth.loggedIn" (click)="open('login')">Einloggen</button>
+    <button mat-menu-item *ngIf="auth.loggedIn">Mein Profil</button>
+    <button mat-menu-item *ngIf="auth.loggedIn" (click)="logout()">Ausloggen</button>
+  </mat-menu>
+
+  <mat-menu #appMenu="matMenu">
+    <button mat-menu-item>Hilfe</button>
+    <button mat-menu-item>Kontakt</button>
+    <button mat-menu-item>Datenschutz</button>
+    <button mat-menu-item>Impressum</button>
+  </mat-menu>
+</header>
+
+<main>
+  <mat-tab-group>
+    <mat-tab label="Karte">
+      <app-map-tab></app-map-tab>
+    </mat-tab>
+
+    <mat-tab label="Helfen">
+      <app-help-your-neighbour offer="help" (open)="open($event)"></app-help-your-neighbour>
+    </mat-tab>
+
+    <mat-tab label="Hilfe bekommen">
+      <app-help-your-neighbour need="help" (open)="open($event)"></app-help-your-neighbour>
+    </mat-tab>
+
+    <mat-tab label="News">
+      <app-news></app-news>
+    </mat-tab>
+  </mat-tab-group>
+</main>
+
+<footer>
+  <div class="container">
+    <p>v{{ version }}</p>
+  </div>
+</footer>
